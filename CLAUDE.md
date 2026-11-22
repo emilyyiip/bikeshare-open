@@ -39,3 +39,14 @@ rides) from calendar, weather, and lagged-demand features.
   cannot extrapolate to 2012. That is the headline result, not an error.
 - 2012-10-29 (Hurricane Sandy, 22 rides) is in the test set. Expect it in
   any residual plot.
+
+## Standing constraints (do not violate)
+- Target is `cnt` (daily rentals). Predict day t using only information available by end of day t-1.
+- FORBIDDEN features: `casual`, `registered`. They sum exactly to `cnt` (target leak). Never use them or anything derived from them.
+- Any lag or rolling feature must use `.shift(1)` or more. Never use same-day `cnt`.
+- Split by time only: train = 2011, validation = 2012-01-01..2012-06-30, test = 2012-07-01..2012-12-31.
+- Choose features and hyperparameters on validation only. Do not compute or print test metrics unless I explicitly ask.
+- Always report mean and persistence (yesterday's `cnt`) baselines next to any model.
+- Never edit, move, or overwrite anything in `data/raw/`.
+- After any change to `src/`, run `make test` and show the result before claiming it works.
+- If R² > 0.95, treat it as suspected leakage and investigate before reporting.
